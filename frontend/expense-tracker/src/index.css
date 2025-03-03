@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Poppins", sans-serif;
+  --color-primary: #875cf5;
+  --breakpoin-3xl: 1920px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-display);
+  }
+
+  body {
+    background-color: #fcfbfc;
+    overflow-x: hidden;
+  }
+}
+
+.input-box {
+  @apply w-full  mt-2 bg-slate-100 border  rounded-lg relative flex items-center;
+}
+
+.btn-primary {
+  @apply w-full bg-purple-600 text-white font-semibold py-1.5 px-4 mt-2.5 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:bg-purple-200 disabled:bg-purple-400 disabled:hover:bg-purple-400 hover:text-purple-500 disabled:hover:text-slate-200 border hover:border-purple-500 transition-all;
+}
