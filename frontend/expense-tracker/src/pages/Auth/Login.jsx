@@ -1,17 +1,27 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+/* eslint-disable no-unused-vars */
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/Inputs/Input";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { validateEmail } from "../../utils/helper";
 
 import { AnimatePresence, motion } from "motion/react";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPath";
+import { UserContext } from "../../context/UserContext";
+import ButtonSpinner from "../../components/ButtonSpinner";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { updateUser, user } = useContext(UserContext);
+  console.log(user);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
@@ -27,7 +37,43 @@ const Login = () => {
     } else {
       setError(null);
     }
+
+    setLoading(true);
+
+    // API call
+    try {
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+        email,
+        password,
+      });
+
+      const { token, user } = response.data;
+
+      if (token && user) {
+        localStorage.setItem("token", token);
+        updateUser(user);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error?.message);
+
+      setError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong!"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // redirect to dashboard page if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <AuthLayout>
@@ -40,11 +86,13 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <Input
-            type="text"
+            type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             label="Email Address"
             placeholder="Enter your email address"
+            required={true}
           />
 
           <Input
@@ -53,6 +101,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             label="Password"
             placeholder="Enter your Password"
+            required={true}
           />
 
           <AnimatePresence>
@@ -62,15 +111,15 @@ const Login = () => {
                 animate={{ scale: 1 }}
                 key="box"
                 exit={{ scale: 0 }}
-                className="text-red-600 text-sm mt-2"
+                className="text-red-600 bg-red-100 px-2 py-1 rounded text-sm mt-2"
               >
                 {error}
               </motion.p>
             )}
           </AnimatePresence>
 
-          <button type="submit" className="btn-primary">
-            Login
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? <ButtonSpinner /> : "Login"}
           </button>
 
           <p className=" text-sm mt-4 text-slate-700">

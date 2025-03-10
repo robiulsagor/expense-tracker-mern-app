@@ -26,3 +26,11 @@
 .btn-primary {
   @apply w-full bg-purple-600 text-white font-semibold py-1.5 px-4 mt-2.5 rounded-lg cursor-pointer disabled:cursor-not-allowed hover:bg-purple-200 disabled:bg-purple-400 disabled:hover:bg-purple-400 hover:text-purple-500 disabled:hover:text-slate-200 border hover:border-purple-500 transition-all;
 }
+
+.btn-1 {
+  @apply bg-green-200 p-2 rounded underline;
+}
+
+.btn-2 {
+  @apply bg-red-100 p-2 rounded text-red-500 underline cursor-pointer;
+}

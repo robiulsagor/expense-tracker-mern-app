@@ -1,36 +1,76 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Input from "../../components/Inputs/Input";
 import AuthLayout from "../../components/layouts/AuthLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { checkRegiValidation } from "../../utils/helper";
 import PhotoSelector from "../../components/Inputs/PhotoSelector";
 import ErrorMessage from "../../components/ErrorMessage";
+import ButtonSpinner from "../../components/ButtonSpinner";
+// import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPath";
+import axiosInstance from "../../utils/axiosInstance";
+import { UserContext } from "../../context/UserContext";
 
 const Register = () => {
+  const { updateUser, user } = useContext(UserContext);
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
 
   const [fullName, setFullName] = useState("");
-
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
   const [focus, setFocus] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    checkRegiValidation(image, fullName, email, password, setErrors);
-    setFocus(true);
+    setFocus(true); // set to true to start watch mode for errors
+
+    const hasErrors = checkRegiValidation(fullName, email, password, setErrors);
+    if (Object.keys(hasErrors).length > 0) return; // if there are errors, return and don't submit form
+
+    // call register API
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+        fullName,
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+
+      if (token && user) {
+        localStorage.setItem("token", token);
+        updateUser(user);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      setErrors({
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong!",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     if (focus) {
-      checkRegiValidation(image, fullName, email, password, setErrors);
+      checkRegiValidation(fullName, email, password, setErrors);
     }
-  }, [focus, image, fullName, email, password]);
+  }, [focus, fullName, email, password]);
 
-  console.log(Object.values(errors).length >= 1);
+  // redirect to dashboard page if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <AuthLayout>
@@ -50,6 +90,7 @@ const Register = () => {
               onChange={(e) => setFullName(e.target.value)}
               label={"First Name"}
               placeholder={"Enter your first name"}
+              // required={true}
             />
 
             <Input
@@ -58,6 +99,7 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)}
               label="Email Address"
               placeholder="Enter your email address"
+              // required={true}
             />
             <div className="col-span-2">
               <Input
@@ -66,18 +108,20 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 label="Password"
                 placeholder="Min 6 characters"
+                // required={true}
               />
             </div>
           </div>
 
           <ErrorMessage errors={errors} />
 
+          {/* submit button */}
           <button
             type="submit"
-            disabled={Object.values(errors).length >= 1}
+            disabled={Object.keys(errors).length >= 1 || loading}
             className="btn-primary "
           >
-            Register
+            {loading ? <ButtonSpinner /> : "Register"}
           </button>
 
           <p className=" text-sm mt-4 text-slate-700">

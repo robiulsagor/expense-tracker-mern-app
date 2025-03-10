@@ -3,6 +3,7 @@ import {
   Route,
   Routes,
   Navigate,
+  Outlet,
 } from "react-router-dom";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -15,12 +16,14 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Root />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/register" exact element={<Register />} />
-          <Route path="/dashboard" exact element={<Home />} />
-          <Route path="/income" exact element={<Income />} />
-          <Route path="/expense" exact element={<Expense />} />
+
+          <Route element={<Root />}>
+            <Route path="/dashboard" exact element={<Home />} />
+            <Route path="/income" exact element={<Income />} />
+            <Route path="/expense" exact element={<Expense />} />
+          </Route>
         </Routes>
       </Router>
     </div>
@@ -30,12 +33,11 @@ function App() {
 export default App;
 
 const Root = () => {
-  // const isAuthenticated = !!localStorage.getItem("authToken");
-  const isAuthenticated = true;
+  const isAuthenticated = !!localStorage.getItem("token");
 
   return isAuthenticated ? (
-    <Navigate to="/dashboard" />
+    <Outlet />
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/login" state={{ from: location.pathname }} replace />
   );
 };

@@ -3,41 +3,31 @@ export const validateEmail = (email) => {
   return regex.test(email);
 };
 
-export const checkRegiValidation = (
-  image,
-  fullName,
-  email,
-  password,
-  setErrors
-) => {
+export const checkRegiValidation = (fullName, email, password, setErrors) => {
   let newErrors = {};
-  if (!image) {
-    newErrors.photo = "Please select a profile photo";
-  } else {
-    delete newErrors.photo;
-  }
 
   if (!fullName) {
-    newErrors.fullName = "Enter your full name";
+    newErrors.fullName = "Full name is required";
   } else {
     delete newErrors.fullName;
   }
 
-  if (!validateEmail(email)) {
+  if (!email) {
+    newErrors.email = "Email is required";
+  } else if (!validateEmail(email)) {
     newErrors.email = "Enter valid email";
   } else {
     delete newErrors.email;
   }
 
-  if (password.length < 8) {
-    newErrors.password = "Password must be at least 8 characters";
+  if (!password) {
+    newErrors.password = "Password is required";
+  } else if (password.length < 6) {
+    newErrors.password = "Password must be at least 6 characters";
   } else {
     delete newErrors.password;
   }
 
   setErrors(newErrors);
-
-  if (!image && !fullName && !validateEmail(email) && password.length < 8) {
-    return;
-  }
+  return newErrors;
 };
