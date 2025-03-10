@@ -10,12 +10,13 @@ import ButtonSpinner from "../../components/ButtonSpinner";
 import { API_PATHS } from "../../utils/apiPath";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserContext } from "../../context/UserContext";
+import { uploadPic } from "../../utils/uploadPic";
 
 const Register = () => {
   const { updateUser, user } = useContext(UserContext);
   const navigate = useNavigate();
-  const [image, setImage] = useState(null);
 
+  const [image, setImage] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,12 +34,19 @@ const Register = () => {
 
     // call register API
     try {
-      setLoading(true);
+      setLoading(true); // set loading to true to show spinner
+      let photoUrl = "";
+      if (image) {
+        photoUrl = await uploadPic(image); // upload image if selected any
+      }
+
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
         fullName,
         email,
         password,
+        profilePhotoUrl: photoUrl,
       });
+
       const { token, user } = response.data;
 
       if (token && user) {

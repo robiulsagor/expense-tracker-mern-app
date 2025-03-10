@@ -5,7 +5,7 @@ export const API_PATHS = {
     GET_USER_INFO: "/api/v1/auth/getUser",
   },
   IMAGE: {
-    UPLOAD_IMAGE: "/api/v1/auth/UPLOAD",
+    UPLOAD_IMAGE: "/api/v1/auth/upload",
   },
   INCOME: {
     ADD_INCOME: "/api/v1/income/add",

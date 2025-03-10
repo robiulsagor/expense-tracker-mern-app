@@ -24,7 +24,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("Response Received:", response); // Debugging (optional)
+    // console.log("Response Received:", response); // Debugging (optional)
     return response;
   },
   (error) => {
