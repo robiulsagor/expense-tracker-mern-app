@@ -17,6 +17,7 @@ export const uploadPic = async (image) => {
     );
     return response?.data?.filePath;
   } catch (error) {
-    console.log(error);
+    console.error("Error uploading image", error);
+    throw error;
   }
 };

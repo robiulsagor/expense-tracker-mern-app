@@ -55,8 +55,6 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error) {
-      console.log(error?.message);
-
       setError(
         error?.response?.data?.message ||
           error?.message ||

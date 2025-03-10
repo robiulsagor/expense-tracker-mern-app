@@ -6,7 +6,6 @@ import { checkRegiValidation } from "../../utils/helper";
 import PhotoSelector from "../../components/Inputs/PhotoSelector";
 import ErrorMessage from "../../components/ErrorMessage";
 import ButtonSpinner from "../../components/ButtonSpinner";
-// import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserContext } from "../../context/UserContext";
@@ -55,6 +54,8 @@ const Register = () => {
         navigate("/dashboard");
       }
     } catch (error) {
+      console.log(error);
+
       setErrors({
         message:
           error?.response?.data?.message ||
@@ -126,7 +127,11 @@ const Register = () => {
           {/* submit button */}
           <button
             type="submit"
-            disabled={Object.keys(errors).length >= 1 || loading}
+            disabled={
+              (Object.keys(errors).length > 0 &&
+                !Object.values(errors).includes("Network Error")) || // Exclude "Network Error"
+              loading
+            }
             className="btn-primary "
           >
             {loading ? <ButtonSpinner /> : "Register"}
