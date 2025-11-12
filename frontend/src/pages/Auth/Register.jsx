@@ -99,7 +99,7 @@ const Register = () => {
               onChange={(e) => setFullName(e.target.value)}
               label={"First Name"}
               placeholder={"Enter your first name"}
-              // required={true}
+              required={true}
             />
 
             <Input
@@ -108,18 +108,24 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)}
               label="Email Address"
               placeholder="Enter your email address"
-              // required={true}
+              required={true}
             />
-            <div className="col-span-2">
               <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 label="Password"
                 placeholder="Min 6 characters"
-                // required={true}
+                required={true}
               />
-            </div>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                label="Confirm Password"
+                placeholder="Min 6 characters"
+                required={true}
+              />
           </div>
 
           <ErrorMessage errors={errors} />
